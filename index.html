@@ -97,7 +97,7 @@
   </div>
 
 <script>
-  // 1. 选项卡切换功能
+ // 1. 选项卡切换功能
   function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -108,16 +108,30 @@
     evt.currentTarget.className += " active";
   }
 
-  // 2. 自动纠错/防丢失功能 (LocalStorage 实时保存)
   const allInputs = document.querySelectorAll('textarea, input');
+
+  // ====== 【新增位置 1：打开网页时的清空逻辑】 ======
+  // 当页面加载时，检查是否带有“已生成过报告”的标记
+  if (localStorage.getItem('report_generated') === 'true') {
+    // 如果有标记，说明上一个人已经做完了，清空所有缓存
+    allInputs.forEach(input => {
+      localStorage.removeItem('ta_cbt_' + input.id);
+    });
+    // 清空完毕后，立刻移除这个标记，准备迎接新的一轮
+    localStorage.removeItem('report_generated');
+  }
+
+  // 2. 自动纠错/防丢失功能 (LocalStorage 实时保存)
   allInputs.forEach(input => {
-    // 页面加载时恢复数据
+    // 恢复数据（如果是填一半刷新的，这里就能把内容重新填回去）
     const savedData = localStorage.getItem('ta_cbt_' + input.id);
     if(savedData) input.value = savedData;
     
-    // 输入时实时保存
+    // 监听输入，实时保存
     input.addEventListener('input', () => {
       localStorage.setItem('ta_cbt_' + input.id, input.value);
+      // 【关键细节】：如果用户在生成报告后又修改了内容，移除完结标记，防止此时误刷新被清空
+      localStorage.removeItem('report_generated');
     });
   });
 
@@ -146,9 +160,13 @@
     document.getElementById('sum-table').innerHTML = html;
     // 自动滚动到报告区域
     document.getElementById('summary').scrollIntoView({behavior: "smooth", block: "start"});
+
+    // ====== 【新增位置 2：打上完结标记】 ======
+    // 报告生成完毕后，在浏览器里存入一个“已完结”的标记
+    localStorage.setItem('report_generated', 'true');
   }
 
-  // 4. 清除数据功能
+  // 4. 手动清除数据功能
   function clearData() {
     if(confirm("确定要清空所有填写的内容吗？清空后无法恢复。")) {
       allInputs.forEach(input => {
@@ -156,6 +174,7 @@
         localStorage.removeItem('ta_cbt_' + input.id);
       });
       document.getElementById('summary').style.display = 'none';
+      localStorage.removeItem('report_generated'); // 同步清除标记
     }
   }
 </script>
