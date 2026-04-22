@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TA决策矩阵</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: #f4f7f6; padding: 20px; color: #333; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+  h2 { text-align: center; color: #2c3e50; }
+  .header-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+  input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-top: 8px; }
+  
+  /* 选项卡样式 */
+  .tab { display: flex; background-color: #e2e8f0; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .tab button { flex: 1; background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 16px; font-size: 16px; font-weight: bold; transition: 0.3s; color: #4a5568; }
+  .tab button:hover { background-color: #cbd5e1; }
+  .tab button.active { background-color: #fff; color: #2b6cb0; border-top: 3px solid #2b6cb0; }
+  
+  /* 内容区样式 */
+  .tabcontent { display: none; padding: 20px; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: fadeEffect 0.5s; }
+  @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+  
+  .tip { background: #ebf8ff; border-left: 4px solid #3182ce; padding: 10px; margin-bottom: 20px; font-size: 14px; color: #2b6cb0; border-radius: 4px; }
+  
+  .field-group { margin-bottom: 15px; }
+  label { font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; }
+  textarea { width: 100%; height: 70px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; resize: vertical; font-size: 14px; }
+  textarea:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2); }
+  
+  .btn-generate { display: block; width: 100%; padding: 15px; background: #38a169; color: white; border: none; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 30px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; }
+  .btn-generate:hover { background: #2f855a; }
+  .btn-clear { display: block; width: 100%; padding: 10px; background: #e53e3e; color: white; border: none; font-size: 14px; border-radius: 8px; margin-top: 10px; cursor: pointer; opacity: 0.8;}
+  
+  /* 汇总表格样式 */
+  #summary { display: none; margin-top: 30px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+  th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; vertical-align: top; }
+  th { background-color: #f7fafc; color: #4a5568; width: 25%; }
+  .col-header { background-color: #edf2f7; font-weight: bold; text-align: center; }
+</style>
+</head>
+<body>
+
+  <h2>🧠 心理学深度决策矩阵 </h2>
+  
+  <div class="header-box">
+    <label for="topic">📌 写下你当前纠结的选择 (决策议题)：</label>
+    <input type="text" id="topic" placeholder="例如：要不要离职？">
+  </div>
+
+  <div class="tab">
+    <button class="tablinks active" onclick="openTab(event, 'Parent')">🧑‍🏫 父母自我 (应该做)</button>
+    <button class="tablinks" onclick="openTab(event, 'Child')">👶 儿童自我 (我想要)</button>
+    <button class="tablinks" onclick="openTab(event, 'Adult')">🧑‍💼 成人自我 (事实是)</button>
+  </div>
+
+  <div id="Parent" class="tabcontent" style="display:block;">
+    <div class="tip">💡 <b>纠结核心：</b>是否符合道德传统？会不会丢脸或被长辈/权威责备？<br><b>操作：</b>如无法梳理，请直接记录脑海中严厉或说教的“原生台词”。</div>
+    <div class="field-group"><label>做出这个选择（收益）：</label><textarea id="p1"></textarea></div>
+    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="p2"></textarea></div>
+    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="p3"></textarea></div>
+    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="p4"></textarea></div>
+    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="p5" placeholder="例如：如何在道德责备下继续行动？"></textarea></div>
+    <div class="field-group"><label>最坏结果：</label><textarea id="p6"></textarea></div>
+    <div class="field-group"><label>最坏结果应对：</label><textarea id="p7"></textarea></div>
+  </div>
+
+  <div id="Child" class="tabcontent">
+    <div class="tip">💡 <b>纠结核心：</b>心情会不会开心？别人是否会觉得我够好？能否证明我对了？<br><b>操作：</b>记录你最原始的情绪、恐惧、欲望和冲动。</div>
+    <div class="field-group"><label>做出这个选择（收益）：</label><textarea id="c1"></textarea></div>
+    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="c2"></textarea></div>
+    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="c3"></textarea></div>
+    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="c4"></textarea></div>
+    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="c5" placeholder="例如：如果没选这个，我该怎么补偿自己的情绪？"></textarea></div>
+    <div class="field-group"><label>最坏结果：</label><textarea id="c6"></textarea></div>
+    <div class="field-group"><label>最坏结果应对：</label><textarea id="c7"></textarea></div>
+  </div>
+
+  <div id="Adult" class="tabcontent">
+    <div class="tip">💡 <b>纠结核心：</b>客观的利益得失是什么？现有资源够不够？<br><b>操作：</b>抛开情绪和面子，只记录冰冷的事实、数据和逻辑分析。</div>
+    <div class="field-group"><label>做出这个选择（收益）：</label><textarea id="a1"></textarea></div>
+    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="a2"></textarea></div>
+    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="a3"></textarea></div>
+    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="a4"></textarea></div>
+    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="a5" placeholder="基于客观事实的第三条路"></textarea></div>
+    <div class="field-group"><label>最坏结果：</label><textarea id="a6"></textarea></div>
+    <div class="field-group"><label>最坏结果应对：</label><textarea id="a7"></textarea></div>
+  </div>
+
+  <button class="btn-generate" onclick="generateReport()">生成完整决策报告</button>
+  <button class="btn-clear" onclick="clearData()">清空所有缓存数据</button>
+
+  <div id="summary">
+    <h3 style="color:#2c3e50; border-bottom:2px solid #3182ce; padding-bottom:10px;">📊 决策汇总：<span id="sum-topic" style="color:#e53e3e;"></span></h3>
+    <table id="sum-table"></table>
+  </div>
+
+<script>
+  // 1. 选项卡切换功能
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  // 2. 自动纠错/防丢失功能 (LocalStorage 实时保存)
+  const allInputs = document.querySelectorAll('textarea, input');
+  allInputs.forEach(input => {
+    // 页面加载时恢复数据
+    const savedData = localStorage.getItem('ta_cbt_' + input.id);
+    if(savedData) input.value = savedData;
+    
+    // 输入时实时保存
+    input.addEventListener('input', () => {
+      localStorage.setItem('ta_cbt_' + input.id, input.value);
+    });
+  });
+
+  // 3. 生成汇总表格功能
+  function generateReport() {
+    document.getElementById('summary').style.display = 'block';
+    const topicVal = document.getElementById('topic').value;
+    document.getElementById('sum-topic').innerText = topicVal ? topicVal : '未命名决策';
+    
+    const rowLabels = ["做出选择 (收益)", "做出选择 (代价)", "不做选择 (收益)", "不做选择 (代价)", "新的可能 (折中)", "最坏结果", "最坏结果应对"];
+    const prefixes = ['p', 'c', 'a']; // 父母, 儿童, 成人
+    
+    let html = "<tr><th>评估维度</th><th class='col-header'>🧑‍🏫 父母自我</th><th class='col-header'>👶 儿童自我</th><th class='col-header'>🧑‍💼 成人自我</th></tr>";
+    
+    for(let i=1; i<=7; i++) {
+      html += `<tr><td><b>${rowLabels[i-1]}</b></td>`;
+      prefixes.forEach(pref => {
+        let val = document.getElementById(pref+i).value;
+        // 处理换行符，使其在表格中正常显示
+        val = val.replace(/\n/g, '<br>');
+        html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td>`;
+      });
+      html += "</tr>";
+    }
+    
+    document.getElementById('sum-table').innerHTML = html;
+    // 自动滚动到报告区域
+    document.getElementById('summary').scrollIntoView({behavior: "smooth", block: "start"});
+  }
+
+  // 4. 清除数据功能
+  function clearData() {
+    if(confirm("确定要清空所有填写的内容吗？清空后无法恢复。")) {
+      allInputs.forEach(input => {
+        input.value = '';
+        localStorage.removeItem('ta_cbt_' + input.id);
+      });
+      document.getElementById('summary').style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>
