@@ -12,8 +12,9 @@
   input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-top: 8px; }
   
   /* 选项卡样式 */
-  .tab { display: flex; background-color: #e2e8f0; border-radius: 8px 8px 0 0; overflow: hidden; }
-  .tab button { flex: 1; background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 16px; font-size: 16px; font-weight: bold; transition: 0.3s; color: #4a5568; }
+  .section-head { background-color: #edf2f7; font-weight: bold; text-align: center; font-size: 15px; }
+  .tab { display: flex; background-color: #e2e8f0; border-radius: 8px 8px 0 0; overflow: hidden; flex-wrap: wrap; }
+  .tab button { flex: 1; min-width: 120px; background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 10px; font-size: 14px; font-weight: bold; transition: 0.3s; color: #4a5568; }
   .tab button:hover { background-color: #cbd5e1; }
   .tab button.active { background-color: #fff; color: #2b6cb0; border-top: 3px solid #2b6cb0; }
   
@@ -49,13 +50,23 @@
     <input type="text" id="topic" placeholder="例如：要不要离职？">
   </div>
 
-  <div class="tab">
-    <button class="tablinks active" onclick="openTab(event, 'Parent')">🧑‍🏫 父母自我 (应该做)</button>
-    <button class="tablinks" onclick="openTab(event, 'Child')">👶 儿童自我 (我想要)</button>
-    <button class="tablinks" onclick="openTab(event, 'Adult')">🧑‍💼 成人自我 (事实是)</button>
+ <div class="tab">
+    <button class="tablinks active" onclick="openTab(event, 'Discount')">🙈 1. 漠视检查</button>
+    <button class="tablinks" onclick="openTab(event, 'Parent')">🧑‍🏫 2. 父母自我</button>
+    <button class="tablinks" onclick="openTab(event, 'Adult')">🧑‍💼 3. 成人自我</button>
+    <button class="tablinks" onclick="openTab(event, 'Child')">👶 4. 儿童自我</button>
+    <button class="tablinks" onclick="openTab(event, 'Script')">🎬 5. 脚本觉察</button>
+  </div>
+ 
+ <div id="Discount" class="tabcontent" style="display:block;">
+    <div class="tip">💡 <b>前置过滤：</b>检查你是否在某些层面上“被自己欺骗”？只有打破漠视，理智分析才有意义。</div>
+    <div class="field-group"><label>【存在】我是不是在自欺欺人，觉得这根本不是个问题？</label><textarea id="d1"></textarea></div>
+    <div class="field-group"><label>【重要性】我是不是在缩小问题的影响，觉得选错也无所谓？</label><textarea id="d2"></textarea></div>
+    <div class="field-group"><label>【可能性】我是不是觉得毫无出路，认为任何选项都很糟？</label><textarea id="d3"></textarea></div>
+    <div class="field-group"><label>【个人能力】我是不是觉得别人能解决，但我绝对搞不定？</label><textarea id="d4"></textarea></div>
   </div>
 
-  <div id="Parent" class="tabcontent" style="display:block;">
+  <div id="Parent" class="tabcontent" <div id="Parent" class="tabcontent">
     <div class="tip">💡 <b>纠结核心：</b>是否符合道德传统？会不会丢脸或被长辈/权威责备？<br><b>提示：</b>如无法梳理，请直接记录脑海中严厉或说教的“原生台词”。<br><b>父母自我状态的含义：<br><b>个体的行为、思想和感觉，是从父母或父母般的权威人物那里复制（借用）来的，有严厉与照顾，分为控制型与养育型。<br><b>当你处于“父母自我”时，你不仅在思考他们曾说过的道理，你的语气、姿态、甚至感觉，都变得和当年的他们一模一样。当你像你过去的权威那样对待自己或他人时，你就在 P （父母）状态</div>
     <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="p2"></textarea></div>
     <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="p3"></textarea></div>
@@ -85,6 +96,13 @@
     <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="a5" placeholder="基于客观事实的第三条路"></textarea></div>
     <div class="field-group"><label>最坏结果：</label><textarea id="a6"></textarea></div>
     <div class="field-group"><label>最坏结果应对：</label><textarea id="a7"></textarea></div>
+  </div>
+
+  <div id="Script" class="tabcontent">
+    <div class="tip">💡 <b>深层驱动：</b>识别这个选择是否在重复你人生脚本中的悲剧或失败模式。</div>
+    <div class="field-group"><label>【熟悉的印记】这种纠结、痛苦的感受，过去是否频繁出现？</label><textarea id="s1"></textarea></div>
+    <div class="field-group"><label>【验证信念】如果选错了，它是否刚好验证了“我不行”或“我不配”？</label><textarea id="s2"></textarea></div>
+    <div class="field-group"><label>【心理游戏】我在利用这个困难来拖延行动，还是在寻求某种同情？</label><textarea id="s3"></textarea></div>
   </div>
 
   <button class="btn-generate" onclick="generateReport()">生成完整决策报告</button>
@@ -143,20 +161,53 @@
     const rowLabels = ["做出选择 (收益)", "做出选择 (代价)", "不做选择 (收益)", "不做选择 (代价)", "新的可能 (折中)", "最坏结果", "最坏结果应对"];
     const prefixes = ['p', 'c', 'a']; // 父母, 儿童, 成人
     
-    let html = "<tr><th>评估维度</th><th class='col-header'>🧑‍🏫 父母自我</th><th class='col-header'>👶 儿童自我</th><th class='col-header'>🧑‍💼 成人自我</th></tr>";
+    // 3. 生成汇总表格功能
+  function generateReport() {
+    document.getElementById('summary').style.display = 'block';
+    const topicVal = document.getElementById('topic').value;
+    document.getElementById('sum-topic').innerText = topicVal ? topicVal : '未命名决策';
     
-    for(let i=1; i<=7; i++) {
-      html += `<tr><td><b>${rowLabels[i-1]}</b></td>`;
-      prefixes.forEach(pref => {
-        let val = document.getElementById(pref+i).value;
-        // 处理换行符，使其在表格中正常显示
-        val = val.replace(/\n/g, '<br>');
-        html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td>`;
-      });
-      html += "</tr>";
+    let html = "";
+    
+    // 阶段1：漠视检查
+    html += `<tr><td colspan="4" class="section-head">🙈 第一阶段：漠视检查 (Discounting)</td></tr>`;
+    html += `<tr><th>层级</th><th colspan="3">分析内容</th></tr>`;
+    const dLabels = ["存在", "重要性", "可能性", "个人能力"];
+    for(let i=1; i<=4; i++) {
+        let val = document.getElementById('d'+i) ? document.getElementById('d'+i).value.replace(/\n/g, '<br>') : '';
+        html += `<tr><td><b>${dLabels[i-1]}</b></td><td colspan="3">${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
     }
-    
+
+    // 阶段2：PAC
+    html += `<tr><td colspan="4" class="section-head">⚖️ 第二阶段：PAC 动力平衡</td></tr>`;
+    html += `<tr><th>维度</th><th>🧑‍🏫 父母自我</th><th>🧑‍💼 成人自我</th><th>👶 儿童自我</th></tr>`;
+    const rowLabels = ["做出选择(收益)", "做出选择(代价)", "不做选择(收益)", "不做选择(代价)", "新的可能(折中)", "最坏结果", "最坏应对"];
+    const prefs = ['p', 'a', 'c']; // 注意：改成了 父母->成人->儿童的顺序
+    for(let i=1; i<=7; i++) {
+        html += `<tr><td><b>${rowLabels[i-1]}</b></td>`;
+        prefs.forEach(p => {
+            let val = document.getElementById(p+i) ? document.getElementById(p+i).value.replace(/\n/g, '<br>') : '';
+            html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td>`;
+        });
+        html += `</tr>`;
+    }
+
+    // 阶段3：脚本
+    html += `<tr><td colspan="4" class="section-head">🎬 第三阶段：脚本觉察 (Script Check)</td></tr>`;
+    const sLabels = ["熟悉的印记", "禁令/信念验证", "心理游戏识别"];
+    for(let i=1; i<=3; i++) {
+        let val = document.getElementById('s'+i) ? document.getElementById('s'+i).value.replace(/\n/g, '<br>') : '';
+        html += `<tr><td><b>${sLabels[i-1]}</b></td><td colspan="3">${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
+    }
+
     document.getElementById('sum-table').innerHTML = html;
+    
+    // 自动滚动到报告区域
+    document.getElementById('summary').scrollIntoView({behavior: "smooth", block: "start"});
+
+    // ====== 保留你的：打上完结标记 ======
+    localStorage.setItem('report_generated', 'true');
+  }
     // 自动滚动到报告区域
     document.getElementById('summary').scrollIntoView({behavior: "smooth", block: "start"});
 
