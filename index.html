@@ -13,6 +13,8 @@
   
   /* 选项卡样式 */
   .section-head { background-color: #edf2f7; font-weight: bold; text-align: center; font-size: 15px; }
+ /* 结束语样式：温暖的背景色和左侧边框 */
+  .closing-message { margin-top: 30px; padding: 20px; background-color: #fffaf0; border-left: 5px solid #ed8936; color: #4a5568; font-size: 15px; border-radius: 4px; line-height: 1.8; }
   .tab { display: flex; background-color: #e2e8f0; border-radius: 8px 8px 0 0; overflow: hidden; flex-wrap: wrap; }
   .tab button { flex: 1; min-width: 120px; background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 10px; font-size: 14px; font-weight: bold; transition: 0.3s; color: #4a5568; }
   .tab button:hover { background-color: #cbd5e1; }
@@ -109,10 +111,16 @@
   <button class="btn-clear" onclick="clearData()">清空所有缓存数据</button>
 
   <div id="summary">
-    <h3 style="color:#2c3e50; border-bottom:2px solid #3182ce; padding-bottom:10px;">📊 决策汇总：<span id="sum-topic" style="color:#e53e3e;"></span></h3>
+    <h3 id="sum-topic-head" style="text-align:center; color:#2c3e50;"></h3>
     <table id="sum-table"></table>
-  </div>
+    
+    <div class="closing-message">
+      <p>🌟 <b>写在最后：</b></p>
+      <p>感谢你勇敢地完成了这此抉择和自我对话。这个表格只是一把手电筒，帮你照亮了那些隐藏在暗处的“规训”、“恐惧”和“渴望”。</p>
+      <p>请记住：在这个世界上，没有任何一个选择是绝对完美的。现在，请带着“成人自我”的理智，去安抚内心的儿童，理解过去的父母。放下这份报告，去迈出现实生活中的一步吧！</p>
+    </div>
 
+  </div>
 <script>
  // 1. 选项卡切换功能
   function openTab(evt, tabName) {
