@@ -208,13 +208,7 @@
     // ====== 保留你的：打上完结标记 ======
     localStorage.setItem('report_generated', 'true');
   }
-    // 自动滚动到报告区域
-    document.getElementById('summary').scrollIntoView({behavior: "smooth", block: "start"});
 
-    // ====== 【新增位置 2：打上完结标记】 ======
-    // 报告生成完毕后，在浏览器里存入一个“已完结”的标记
-    localStorage.setItem('report_generated', 'true');
-  }
 
   // 4. 手动清除数据功能
   function clearData() {
