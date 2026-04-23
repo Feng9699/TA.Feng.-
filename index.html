@@ -152,27 +152,15 @@
     });
   });
 
-  // 3. 生成汇总表格功能
-  function generateReport() {
-    document.getElementById('summary').style.display = 'block';
-    const topicVal = document.getElementById('topic').value;
-    document.getElementById('sum-topic').innerText = topicVal ? topicVal : '未命名决策';
-    
-    const rowLabels = ["做出选择 (收益)", "做出选择 (代价)", "不做选择 (收益)", "不做选择 (代价)", "新的可能 (折中)", "最坏结果", "最坏结果应对"];
-    const prefixes = ['p', 'c', 'a']; // 父母, 儿童, 成人
-    
-  // 3. 生成汇总表格功能（防弹容错版）
+// 3. 生成汇总表格功能（排版Bug已修复版）
   function generateReport() {
     try {
-        // 1. 显示汇总区域
         const summaryDiv = document.getElementById('summary');
         if (summaryDiv) summaryDiv.style.display = 'block';
         
-        // 2. 获取议题名称
         const topicInput = document.getElementById('topic');
         const topicVal = topicInput ? topicInput.value : '未命名决策';
         
-        // 3. 兼容处理标题（防止因为新旧版本 ID 不同而崩溃）
         const sumTopicSpan = document.getElementById('sum-topic');
         const sumTopicHead = document.getElementById('sum-topic-head');
         if (sumTopicSpan) sumTopicSpan.innerText = topicVal || '未命名决策';
@@ -194,13 +182,14 @@
         html += "<tr><td colspan='4' class='section-head'>⚖️ 第二阶段：PAC 动力平衡</td></tr>";
         html += "<tr><th>维度</th><th>🧑‍🏫 父母自我</th><th>🧑‍💼 成人自我</th><th>👶 儿童自我</th></tr>";
         const rowLabels = ["做出选择(收益)", "做出选择(代价)", "不做选择(收益)", "不做选择(代价)", "新的可能(折中)", "最坏结果", "最坏应对"];
-        const prefs = ['p', 'a', 'c']; // 父母->成人->儿童
+        const prefs = ['p', 'a', 'c']; 
         for(let i=1; i<=7; i++) {
             html += `<tr><td><b>${rowLabels[i-1]}</b></td>`;
             prefs.forEach(p => {
                 let el = document.getElementById(p+i);
                 let val = el ? el.value.replace(/\n/g, '<br>') : '';
-                html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
+                // ⚠️ 关键修复：去掉了之前这里多余的 </tr> 标签
+                html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td>`;
             });
             html += "</tr>";
         }
@@ -214,22 +203,18 @@
             html += `<tr><td><b>${sLabels[i-1]}</b></td><td colspan='3'>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
         }
 
-        // 4. 将拼接好的内容塞进表格
         const sumTable = document.getElementById('sum-table');
         if (sumTable) {
             sumTable.innerHTML = html;
         } else {
-            alert("找不到表格容器！请检查上面的 HTML 里是不是不小心删除了 <table id='sum-table'></table> 这行代码。");
+            alert("找不到表格容器！");
         }
         
-        // 5. 自动滚动并打上完结标记
         if (summaryDiv) summaryDiv.scrollIntoView({behavior: "smooth", block: "start"});
         localStorage.setItem('report_generated', 'true');
 
     } catch (error) {
-        // 如果再出错，直接弹窗告诉你错在哪里，而不是默默罢工
-        alert("生成表格时遇到代码错误：\n" + error.message + "\n\n请按键盘 F12 查看详细报错。");
-        console.error("生成表格错误详情：", error);
+        alert("生成表格时遇到代码错误：\n" + error.message);
     }
   }
 
