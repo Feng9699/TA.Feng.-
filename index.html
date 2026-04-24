@@ -3,126 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TA决策矩阵</title>
+<title>深度决策矩阵</title>
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background-color: #f4f7f6; padding: 20px; color: #333; max-width: 900px; margin: 0 auto; line-height: 1.6; }
-  h2 { text-align: center; color: #2c3e50; }
+  body { background-color: #f4f7f6; padding: 20px; color: #333; max-width: 1000px; margin: 0 auto; line-height: 1.6; }
+  h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
+  .subtitle { text-align: center; color: #718096; margin-bottom: 25px; font-size: 14px; }
+  
+  .intro-box { background: #f0fdf4; border-left: 5px solid #22c55e; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; font-size: 14.5px; color: #166534; }
   .header-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
   input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-top: 8px; }
   
-  /* 选项卡样式 */
-  .section-head { background-color: #edf2f7; font-weight: bold; text-align: center; font-size: 15px; }
- /* 结束语样式：温暖的背景色和左侧边框 */
-  .closing-message { margin-top: 30px; padding: 20px; background-color: #fffaf0; border-left: 5px solid #ed8936; color: #4a5568; font-size: 15px; border-radius: 4px; line-height: 1.8; }
   .tab { display: flex; background-color: #e2e8f0; border-radius: 8px 8px 0 0; overflow: hidden; flex-wrap: wrap; }
   .tab button { flex: 1; min-width: 120px; background-color: inherit; border: none; outline: none; cursor: pointer; padding: 14px 10px; font-size: 14px; font-weight: bold; transition: 0.3s; color: #4a5568; }
   .tab button:hover { background-color: #cbd5e1; }
   .tab button.active { background-color: #fff; color: #2b6cb0; border-top: 3px solid #2b6cb0; }
   
-  /* 内容区样式 */
   .tabcontent { display: none; padding: 20px; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: fadeEffect 0.5s; }
   @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
   
   .tip { background: #ebf8ff; border-left: 4px solid #3182ce; padding: 10px; margin-bottom: 20px; font-size: 14px; color: #2b6cb0; border-radius: 4px; }
-  
   .field-group { margin-bottom: 15px; }
   label { font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; }
-  textarea { width: 100%; height: 70px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; resize: vertical; font-size: 14px; }
-  textarea:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2); }
+  textarea { width: 100%; height: 75px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; resize: vertical; font-size: 14px; line-height: 1.5; }
   
-  .btn-generate { display: block; width: 100%; padding: 15px; background: #38a169; color: white; border: none; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 30px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; }
-  .btn-generate:hover { background: #2f855a; }
-  .btn-clear { display: block; width: 100%; padding: 10px; background: #e53e3e; color: white; border: none; font-size: 14px; border-radius: 8px; margin-top: 10px; cursor: pointer; opacity: 0.8;}
+  .btn-generate { display: block; width: 100%; padding: 15px; background: #38a169; color: white; border: none; font-size: 18px; font-weight: bold; border-radius: 8px; margin-top: 30px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  .btn-clear { display: block; width: 100%; padding: 10px; background: #e53e3e; color: white; border: none; font-size: 14px; border-radius: 8px; margin-top: 10px; cursor: pointer; opacity: 0.7;}
   
-  /* 汇总表格样式 */
   #summary { display: none; margin-top: 30px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-  th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; vertical-align: top; }
-  th { background-color: #f7fafc; color: #4a5568; width: 25%; }
-  .col-header { background-color: #edf2f7; font-weight: bold; text-align: center; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; table-layout: fixed; }
+  th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; vertical-align: top; word-wrap: break-word; }
+  th { background-color: #f7fafc; color: #4a5568; }
+  .section-head { background-color: #edf2f7; font-weight: bold; text-align: center; font-size: 15px; color: #2c3e50;}
+  
+  .interpretation-box { margin-top: 30px; padding: 20px; background-color: #fffaf0; border-left: 5px solid #ed8936; color: #4a5568; font-size: 14.5px; border-radius: 4px; line-height: 1.8; }
+
+  /* 反馈区样式 */
+  .feedback-box { margin-top: 30px; padding: 20px; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; }
+  .rating-container { display: flex; justify-content: space-between; margin: 15px 0; flex-wrap: wrap; gap: 5px; }
+  .rating-btn { flex: 1; min-width: 35px; height: 35px; border: 1px solid #e2e8f0; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; color: #64748b; transition: 0.2s; }
+  .rating-btn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+  .rating-btn.selected { background-color: #3b82f6; color: white; border-color: #2563eb; }
+  .feedback-textarea { width: 100%; height: 100px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; font-size: 14px; }
+  .btn-submit-feedback { width: 100%; padding: 12px; background: #6366f1; color: white; border: none; border-radius: 6px; margin-top: 15px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+  .btn-submit-feedback:hover { background: #4f46e5; }
 </style>
 </head>
 <body>
 
-  <h2>🧠 心理学深度决策矩阵 </h2>
+  <h2>🧠 TA深度决策觉察矩阵</h2>
+  <div class="subtitle">基于沟通分析 (TA) 与认知行为疗法 (CBT)</div>
+
+  <div class="intro-box">
+    <b>📝 填表说明与目的：</b><br>
+    本探索工具共包含 <b>5个部分</b>。<br>
+    你填写的这些信息，并不是为了用算数的方式“强迫”你得出一个标准答案，而是为了：<br>
+    1. <b>厘清内在冲突：</b> 看清理智考量与情绪感受在哪里产生了分歧。<br>
+    2. <b>识别隐形阻碍：</b> 发现你决策过程中被压力习惯或潜在担忧影响的部分。<br>
+    <i>* 请在填写时尽量详细描述你的具体事实、感受和联想，避免只用“是/否”作答。</i>
+  </div>
   
   <div class="header-box">
-    <label for="topic">📌 写下你当前纠结的选择 (决策议题)：</label>
-    <input type="text" id="topic" placeholder="例如：要不要离职？">
+    <label for="topic">📌 当前决策议题（你正在纠结的选择是什么？）：</label>
+    <input type="text" id="topic" placeholder="例如：要不要接受这份异地的新工作？">
   </div>
 
- <div class="tab">
-    <button class="tablinks active" onclick="openTab(event, 'Discount')">🙈 1. 漠视检查</button>
+  <div class="tab">
+    <button class="tablinks active" onclick="openTab(event, 'Discount')">🙈 1. 漠视排查</button>
     <button class="tablinks" onclick="openTab(event, 'Parent')">🧑‍🏫 2. 父母自我</button>
-    <button class="tablinks" onclick="openTab(event, 'Adult')">🧑‍💼 3. 成人自我</button>
-    <button class="tablinks" onclick="openTab(event, 'Child')">👶 4. 儿童自我</button>
-    <button class="tablinks" onclick="openTab(event, 'Script')">🎬 5. 脚本觉察</button>
-  </div>
- 
- <div id="Discount" class="tabcontent" style="display:block;">
-    <div class="tip">💡 <b>前置过滤：</b>检查你是否在某些层面上“被自己欺骗”？只有打破漠视，理智分析才有意义。</div>
-    <div class="field-group"><label>【存在】我是不是在自欺欺人，觉得这根本不是个问题？</label><textarea id="d1"></textarea></div>
-    <div class="field-group"><label>【重要性】我是不是在缩小问题的影响，觉得选错也无所谓？</label><textarea id="d2"></textarea></div>
-    <div class="field-group"><label>【可能性】我是不是觉得毫无出路，认为任何选项都很糟？</label><textarea id="d3"></textarea></div>
-    <div class="field-group"><label>【个人能力】我是不是觉得别人能解决，但我绝对搞不定？</label><textarea id="d4"></textarea></div>
+    <button class="tablinks" onclick="openTab(event, 'Child')">👶 3. 儿童自我</button>
+    <button class="tablinks" onclick="openTab(event, 'Adult')"> 🧑‍💼4. 成人自我</button>
+    <button class="tablinks" onclick="openTab(event, 'Blockers')">🔍 5. 隐性阻力</button>
   </div>
 
-  <div id="Parent" class="tabcontent" <div id="Parent" class="tabcontent">
-    <div class="tip">💡 <b>纠结核心：</b>是否符合道德传统？会不会丢脸或被长辈/权威责备？<br><b>提示：</b>如无法梳理，请直接记录脑海中严厉或说教的“原生台词”。<br><b>父母自我状态的含义：<br><b>个体的行为、思想和感觉，是从父母或父母般的权威人物那里复制（借用）来的，有严厉与照顾，分为控制型与养育型。<br><b>当你处于“父母自我”时，你不仅在思考他们曾说过的道理，你的语气、姿态、甚至感觉，都变得和当年的他们一模一样。当你像你过去的权威那样对待自己或他人时，你就在 P （父母）状态</div>
-    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="p2"></textarea></div>
-    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="p3"></textarea></div>
-    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="p4"></textarea></div>
-    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="p5" placeholder="例如：如何在道德责备下继续行动？"></textarea></div>
-    <div class="field-group"><label>最坏结果：</label><textarea id="p6"></textarea></div>
-    <div class="field-group"><label>最坏结果应对：</label><textarea id="p7"></textarea></div>
+  <div id="Discount" class="tabcontent" style="display:block;">
+    <div class="tip">💡 <b>第一阶段：</b>检查你是否在某些层面上“被自己欺骗”？打破漠视，理智分析会更有意义。</div>
+    <div class="field-group"><label>【问题存在】关于这个决定，有哪些现实情况或细节，是你一直试图逃避、假装它不存在的？</label><textarea id="d1"></textarea></div>
+    <div class="field-group"><label>【重要性】如果你随意做一个决定（或拖延不做决定），它在未来引发的真实代价具体会是什么？（请客观描述）</label><textarea id="d2"></textarea></div>
+    <div class="field-group"><label>【可能性】除了目前看到的选项，如果放开所有限制，还有哪些曾被你轻易否定过的“隐藏方案”？</label><textarea id="d3"></textarea></div>
+    <div class="field-group"><label>【个人能力】回顾过去，你曾解决过哪些类似的难题？你现在的哪些能力可以用来应对当下，却被你低估了？</label><textarea id="d4"></textarea></div>
   </div>
 
+  <div id="Parent" class="tabcontent">
+    <div class="tip">💡 <b>第二阶段：</b>倾听你内心的“规训者”。它通常代表着长辈的声音、道德、面子和“应该如何”。<br><b>纠结核心：</b>是否符合道德传统？会不会丢脸或被长辈/权威责备？<br><b>提示：</b>如无法梳理，请直接记录脑海中严厉或说教的“原生台词”。<br><b>父母自我状态的含义：<br><b>个体的行为、思想和感觉，是从父母或父母般的权威人物那里复制（借用）来的，有严厉与照顾，分为控制型与养育型。<br><b>当你处于“父母自我”时，你不仅在思考他们曾说过的道理，你的语气、姿态、甚至感觉，都变得和当年的他们一模一样。当你像你过去的权威那样对待自己或他人时，你就在 P （父母）状态</div>
+    <div class="field-group"><label>做出选择（优势/收益）：</label><textarea id="p1" placeholder="例如：符合他人的期待、能获得长辈赞赏..."></textarea></div>
+    <div class="field-group"><label>做出选择（劣势/代价）：</label><textarea id="p2" placeholder="例如：违背了某种传统道德、会让人觉得我不懂事..."></textarea></div>
+    <div class="field-group"><label>保持现状（优势/收益）：</label><textarea id="p3"></textarea></div>
+    <div class="field-group"><label>保持现状（劣势/代价）：</label><textarea id="p4"></textarea></div>
+    <div class="field-group"><label>折中方案（新的可能）：</label><textarea id="p5" placeholder="例如：如何在兼顾面子/道德的情况下推进？"></textarea></div>
+    <div class="field-group"><label>感受与想法：</label><textarea id="p6" placeholder="面对上述这些条条框框，你当下的感受是什么？（沉重、安全感、压抑？）"></textarea></div>
+    <div class="field-group"><label>支持行动：</label><textarea id="p7" placeholder="基于这部分，你下一步能做的一个具体微小行动是什么？"></textarea></div>
+  </div>
+     
   <div id="Child" class="tabcontent">
-    <div class="tip">💡 <b>纠结核心：</b>心情会不会开心？别人是否会觉得我够好？能否证明我对了？<br><b>提示：</b>记录你最原始的情绪、恐惧、欲望和冲动。<br><b>儿童自我状态的含义：<br><b>个体的行为、思想和感觉，是自己童年时代的重演（回放）。有恐惧和好奇，分为适应型和自然型。儿童自我不是指你表现得“像个孩子”，而是你表现得“像你小时候的自己”。<br><b>当你处于这个状态时，你重新体验到了小时候的恐惧、委屈、顺从，或者是那一刻的古灵精怪、创造力和纯粹的快乐，也有为了不被惩罚而小心翼翼，察言观色。当你用自己小时候的感受去体验世界，用小时候的策略去应对眼前的人时，你就在 C （儿童）状态。</div>
-    <div class="field-group"><label>做出这个选择（收益）：</label><textarea id="c1"></textarea></div>
-    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="c2"></textarea></div>
-    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="c3"></textarea></div>
-    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="c4"></textarea></div>
-    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="c5" placeholder="例如：如果没选这个，我该怎么补偿自己的情绪？"></textarea></div>
-    <div class="field-group"><label>最坏结果：</label><textarea id="c6"></textarea></div>
-    <div class="field-group"><label>最坏结果应对：</label><textarea id="c7"></textarea></div>
+    <div class="tip">💡 <b>第三阶段：</b>看见你内心的“小女孩/小男孩”。它关乎你最原始的渴望、恐惧、委屈和开心。 <br><b>纠结核心：</b>心情会不会开心？别人是否会觉得我够好？能否证明我对了？<br><b>提示：</b>记录你最原始的情绪、恐惧、欲望和冲动。<br><b>儿童自我状态的含义：<br><b>个体的行为、思想和感觉，是自己童年时代的重演（回放）。有恐惧和好奇，分为适应型和自然型。儿童自我不是指你表现得“像个孩子”，而是你表现得“像你小时候的自己”。<br><b>当你处于这个状态时，你重新体验到了小时候的恐惧、委屈、顺从，或者是那一刻的古灵精怪、创造力和纯粹的快乐，也有为了不被惩罚而小心翼翼，察言观色。当你用自己小时候的感受去体验世界，用小时候的策略去应对眼前的人时，你就在 C （儿童）状态。</div>
+    <div class="field-group"><label>做出选择（优势/收益）：</label><textarea id="c1" placeholder="例如：我觉得特别爽、特别自由、很有成就感！"></textarea></div>
+    <div class="field-group"><label>做出选择（劣势/代价）：</label><textarea id="c2" placeholder="例如：我好害怕选错会被人笑话、怕自己搞砸..."></textarea></div>
+    <div class="field-group"><label>保持现状（优势/收益）：</label><textarea id="c3"></textarea></div>
+    <div class="field-group"><label>保持现状（劣势/代价）：</label><textarea id="c4"></textarea></div>
+    <div class="field-group"><label>折中方案（新的可能）：</label><textarea id="c5" placeholder="如果选了不喜欢的，可以怎么补偿自己的情绪？"></textarea></div>
+    <div class="field-group"><label>感受与想法：</label><textarea id="c6" placeholder="写下你此刻最真实、最不加掩饰的情绪冲动。"></textarea></div>
+    <div class="field-group"><label>支持行动：</label><textarea id="c7" placeholder="在做决定前，你可以做点什么来安抚或奖励自己？"></textarea></div>
   </div>
-
+     
   <div id="Adult" class="tabcontent">
-    <div class="tip">💡 <b>纠结核心：</b>客观的利益得失是什么？现有资源够不够？<br><b>提示：</b>记录事实、逻辑分析和得失。<br><b>成人自我状态的含义：<br><b>个体的行为、思想和感觉，是针对此时此地的现实状况做出的直接反应。<br><b>当你处于这个状态时，你不带历史包袱的，不去盲目遵从过去的经验和规则，也不被童年的情绪吞没，而是有符合当下情况的情绪。当你客观冷静地运用当前的资源解决眼前的问题时，你就在 A（成人） 状态。</div>
-    <div class="field-group"><label>做出这个选择（收益）：</label><textarea id="a1"></textarea></div>
-    <div class="field-group"><label>做出这个选择（代价）：</label><textarea id="a2"></textarea></div>
-    <div class="field-group"><label>不做这个选择（收益）：</label><textarea id="a3"></textarea></div>
-    <div class="field-group"><label>不做这个选择（代价）：</label><textarea id="a4"></textarea></div>
-    <div class="field-group"><label>新的可能（折中方案）：</label><textarea id="a5" placeholder="基于客观事实的第三条路"></textarea></div>
-    <div class="field-group"><label>最坏结果：</label><textarea id="a6"></textarea></div>
-    <div class="field-group"><label>最坏结果应对：</label><textarea id="a7"></textarea></div>
+    <div class="tip">💡 <b>第四阶段：</b>启动你内心的“计算机”。看客观的事实、数据和概率。 <br><b>纠结核心：</b>客观的利益得失是什么？现有资源够不够？<br><b>提示：</b>记录事实、逻辑分析和得失。<br><b>成人自我状态的含义：<br><b>个体的行为、思想和感觉，是针对此时此地的现实状况做出的直接反应。<br><b>当你处于这个状态时，你不带历史包袱的，不去盲目遵从过去的经验和规则，也不被童年的情绪吞没，而是有符合当下情况的情绪。当你客观冷静地运用当前的资源解决眼前的问题时，你就在 A（成人） 状态。</div>
+    <div class="field-group"><label>做出选择（优势/收益）：</label><textarea id="a1" placeholder="例如：薪资提升30%、通勤时间减少..."></textarea></div>
+    <div class="field-group"><label>做出选择（劣势/代价）：</label><textarea id="a2" placeholder="例如：需要重新学习新技能、失去现有年假..."></textarea></div>
+    <div class="field-group"><label>保持现状（优势/收益）：</label><textarea id="a3"></textarea></div>
+    <div class="field-group"><label>保持现状（劣势/代价）：</label><textarea id="a4"></textarea></div>
+    <div class="field-group"><label>折中方案（新的可能）：</label><textarea id="a5" placeholder="基于客观事实的第三条路是什么？"></textarea></div>
+    <div class="field-group"><label>感受与想法：</label><textarea id="a6" placeholder="看完这些冰冷的现实得失，你脑海中浮现的想法是？"></textarea></div>
+    <div class="field-group"><label>支持行动：</label><textarea id="a7" placeholder="为了验证这些事实，你现在需要去收集什么信息或做哪件事？"></textarea></div>
   </div>
 
-  <div id="Script" class="tabcontent">
-    <div class="tip">💡 <b>深层驱动：</b>识别这个选择是否在重复你人生脚本中的悲剧或失败模式。</div>
-    <div class="field-group"><label>【熟悉的印记】这种纠结、痛苦的感受，过去是否频繁出现？</label><textarea id="s1"></textarea></div>
-    <div class="field-group"><label>【验证信念】如果选错了，它是否刚好验证了“我不行”或“我不配”？</label><textarea id="s2"></textarea></div>
-    <div class="field-group"><label>【心理游戏】我在利用这个困难来拖延行动，还是在寻求某种同情？</label><textarea id="s3"></textarea></div>
+  <div id="Blockers" class="tabcontent">
+    <div class="tip">💡 <b>第五阶段：</b>进阶排查。你理清了前面的利弊，来看看是否有潜意识的习惯在阻碍你。</div>
+    <div class="field-group">
+      <label>【驱力检查】在做这个决定时，你是否感受到以下非理性的紧迫感？（可多选）</label>
+      <div style="margin-bottom: 8px;">
+        <label style="display:inline-block; font-weight:normal; margin-right:15px;"><input type="checkbox" id="driver1" value="追求完美"> 追求完美 (强求万无一失的最优解)</label>
+        <label style="display:inline-block; font-weight:normal; margin-right:15px;"><input type="checkbox" id="driver2" value="取悦他人"> 取悦他人 (过度害怕让某人失望)</label>
+        <label style="display:inline-block; font-weight:normal; margin-right:15px;"><input type="checkbox" id="driver3" value="过度努力"> 过度努力 (选轻松的路会觉得心虚)</label>
+        <label style="display:inline-block; font-weight:normal; margin-right:15px;"><input type="checkbox" id="driver4" value="独自坚强"> 独自坚强 (不能展露脆弱或求助)</label>
+        <label style="display:inline-block; font-weight:normal; margin-right:15px;"><input type="checkbox" id="driver5" value="急于求成"> 急于求成 (受不了纠结，想随便选一个)</label>
+      </div>
+      <textarea id="s1" placeholder="请具体描述：这些打勾的习惯，是如何拉扯你的决定的？"></textarea>
+    </div>
+    <div class="field-group">
+      <label>【隐性的阻力与担忧】如果抛开一切现实，直接选择你内心最渴望的那个方案，你脑海里冒出的第一个“恐吓”你的声音是什么？</label>
+      <textarea id="s2" placeholder="例如：你会搞砸的、别人会对你很失望、你不配得到这么好的..."></textarea>
+    </div>
   </div>
 
-  <button class="btn-generate" onclick="generateReport()">生成完整决策报告</button>
-  <button class="btn-clear" onclick="clearData()">清空所有缓存数据</button>
+  <button class="btn-generate" onclick="generateReport()">生成全景决策报告</button>
+  <button class="btn-clear" onclick="clearData()">清空所有数据</button>
 
   <div id="summary">
     <h3 id="sum-topic-head" style="text-align:center; color:#2c3e50;"></h3>
     <table id="sum-table"></table>
     
-    <div class="closing-message">
-      <p>🌟 <b>写在最后：</b></p>
+    <div class="interpretation-box">
+     <p>🌟 <b>写在最后：</b></p>
       <p>感谢你勇敢地完成了这此抉择和自我对话。这个表格只是一把手电筒，帮你照亮了那些隐藏在暗处的“规训”、“恐惧”和“渴望”。</p>
       <p>很多时候，我们的纠结并不是因为我们不够聪明，而是因为我们背负了太多不属于自己的声音。真正的决定权始终握在你的手中，无论你最终做何选择，你都是值得被爱的。请记住：在这个世界上，没有任何一个选择是绝对完美的。现在，请带着“成人自我”的理智，去安抚内心的儿童，理解过去的父母。去迈出现实生活中的一步吧！</p>
+</li>
+      </ul>
     </div>
 
+    <div class="feedback-box">
+      <p style="margin-top:0;"><b>💡 来访反馈（用于工具迭代优化）：</b></p>
+      <label style="font-size: 13px; color: #64748b;">1. 经过本次梳理，您觉得该工具对您的决策帮助程度？（1分最小，10分最大）</label>
+      <div class="rating-container" id="ratingContainer">
+        <button class="rating-btn" onclick="setRating(1)">1</button>
+        <button class="rating-btn" onclick="setRating(2)">2</button>
+        <button class="rating-btn" onclick="setRating(3)">3</button>
+        <button class="rating-btn" onclick="setRating(4)">4</button>
+        <button class="rating-btn" onclick="setRating(5)">5</button>
+        <button class="rating-btn" onclick="setRating(6)">6</button>
+        <button class="rating-btn" onclick="setRating(7)">7</button>
+        <button class="rating-btn" onclick="setRating(8)">8</button>
+        <button class="rating-btn" onclick="setRating(9)">9</button>
+        <button class="rating-btn" onclick="setRating(10)">10</button>
+      </div>
+      <label style="font-size: 13px; color: #64748b;">2. 您的填表心得、遇到的困难或希望改进的地方：</label>
+      <textarea class="feedback-textarea" id="userFeedback" placeholder="例如：哪个问题让你觉得卡壳？或者哪一部分给了你最大的启发？您的意见非常重要..."></textarea>
+      <button class="btn-submit-feedback" onclick="submitFeedback()">提交反馈心得</button>
+    </div>
   </div>
+
 <script>
- // 1. 选项卡切换功能
   function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -133,53 +183,47 @@
     evt.currentTarget.className += " active";
   }
 
-  const allInputs = document.querySelectorAll('textarea, input');
+  const allInputs = document.querySelectorAll('textarea:not(#userFeedback), input[type="text"]');
+  const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
 
-  // ====== 【新增位置 1：打开网页时的清空逻辑】 ======
-  // 当页面加载时，检查是否带有“已生成过报告”的标记
-  if (localStorage.getItem('report_generated') === 'true') {
-    // 如果有标记，说明上一个人已经做完了，清空所有缓存
-    allInputs.forEach(input => {
-      localStorage.removeItem('ta_cbt_' + input.id);
-    });
-    // 清空完毕后，立刻移除这个标记，准备迎接新的一轮
-    localStorage.removeItem('report_generated');
+  if (localStorage.getItem('report_done') === 'true') {
+    allInputs.forEach(input => localStorage.removeItem('t_app_' + input.id));
+    allCheckboxes.forEach(cb => localStorage.removeItem('t_app_' + cb.id));
+    localStorage.removeItem('report_done');
   }
 
-  // 2. 自动纠错/防丢失功能 (LocalStorage 实时保存)
   allInputs.forEach(input => {
-    // 恢复数据（如果是填一半刷新的，这里就能把内容重新填回去）
-    const savedData = localStorage.getItem('ta_cbt_' + input.id);
-    if(savedData) input.value = savedData;
-    
-    // 监听输入，实时保存
+    const saved = localStorage.getItem('t_app_' + input.id);
+    if(saved) input.value = saved;
     input.addEventListener('input', () => {
-      localStorage.setItem('ta_cbt_' + input.id, input.value);
-      // 【关键细节】：如果用户在生成报告后又修改了内容，移除完结标记，防止此时误刷新被清空
-      localStorage.removeItem('report_generated');
+      localStorage.setItem('t_app_' + input.id, input.value);
+      localStorage.removeItem('report_done');
     });
   });
 
-// 3. 生成汇总表格功能（排版Bug已修复版）
+  allCheckboxes.forEach(cb => {
+    const saved = localStorage.getItem('t_app_' + cb.id);
+    if(saved === 'true') cb.checked = true;
+    cb.addEventListener('change', () => {
+      localStorage.setItem('t_app_' + cb.id, cb.checked);
+      localStorage.removeItem('report_done');
+    });
+  });
+
   function generateReport() {
     try {
         const summaryDiv = document.getElementById('summary');
         if (summaryDiv) summaryDiv.style.display = 'block';
         
-        const topicInput = document.getElementById('topic');
-        const topicVal = topicInput ? topicInput.value : '未命名决策';
-        
-        const sumTopicSpan = document.getElementById('sum-topic');
+        const topicVal = document.getElementById('topic').value || '未命名决策';
         const sumTopicHead = document.getElementById('sum-topic-head');
-        if (sumTopicSpan) sumTopicSpan.innerText = topicVal || '未命名决策';
-        if (sumTopicHead) sumTopicHead.innerText = "📊 深度决策报告：" + (topicVal || '未命名决策');
+        if (sumTopicHead) sumTopicHead.innerText = "📊 深度决策分析报告：" + topicVal;
         
         let html = "";
         
-        // 阶段1：漠视检查
-        html += "<tr><td colspan='4' class='section-head'>🙈 第一阶段：漠视检查 (Discounting)</td></tr>";
-        html += "<tr><th style='width:25%'>层级</th><th colspan='3'>分析内容</th></tr>";
-        const dLabels = ["存在", "重要性", "可能性", "个人能力"];
+        // 阶段1：漠视
+        html += "<tr><td colspan='4' class='section-head'>🙈 第一阶段：破除漠视 (Discounting)</td></tr>";
+        const dLabels = ["现实问题", "真实代价", "隐藏方案", "个人能力"];
         for(let i=1; i<=4; i++) {
             let el = document.getElementById('d'+i);
             let val = el ? el.value.replace(/\n/g, '<br>') : '';
@@ -187,56 +231,97 @@
         }
 
         // 阶段2：PAC
-        html += "<tr><td colspan='4' class='section-head'>⚖️ 第二阶段：PAC 动力平衡</td></tr>";
-        html += "<tr><th>维度</th><th>🧑‍🏫 父母自我</th><th>🧑‍💼 成人自我</th><th>👶 儿童自我</th></tr>";
-        const rowLabels = ["做出选择(收益)", "做出选择(代价)", "不做选择(收益)", "不做选择(代价)", "新的可能(折中)", "最坏结果", "最坏应对"];
-        const prefs = ['p', 'a', 'c']; 
+        html += "<tr><td colspan='4' class='section-head'>⚖️ 第二阶段：PAC 动力平衡与行动</td></tr>";
+        html += "<tr><th style='width:22%'>评估维度</th><th style='width:26%'>🧑‍🏫 父母自我</th><th style='width:26%'>👶 儿童自我</th><th style='width:26%'>🧑‍💼 成人自我</th></tr>";
+        const rowLabels = ["做出选择 (优势)", "做出选择 (代价)", "保持现状 (优势)", "保持现状 (代价)", "折中方案 (新可能)", "感受与想法", "支持行动"];
+        const prefs = ['p', 'c', 'a']; 
         for(let i=1; i<=7; i++) {
             html += `<tr><td><b>${rowLabels[i-1]}</b></td>`;
             prefs.forEach(p => {
                 let el = document.getElementById(p+i);
                 let val = el ? el.value.replace(/\n/g, '<br>') : '';
-                // ⚠️ 关键修复：去掉了之前这里多余的 </tr> 标签
                 html += `<td>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td>`;
             });
             html += "</tr>";
         }
 
-        // 阶段3：脚本
-        html += "<tr><td colspan='4' class='section-head'>🎬 第三阶段：脚本觉察 (Script Check)</td></tr>";
-        const sLabels = ["熟悉的印记", "禁令/信念验证", "心理游戏识别"];
-        for(let i=1; i<=3; i++) {
-            let el = document.getElementById('s'+i);
-            let val = el ? el.value.replace(/\n/g, '<br>') : '';
-            html += `<tr><td><b>${sLabels[i-1]}</b></td><td colspan='3'>${val ? val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
+        // 阶段3：隐性阻力 (重构)
+        html += "<tr><td colspan='4' class='section-head'>🔍 第三阶段：隐性阻力排查</td></tr>";
+        let drivers = [];
+        for(let i=1; i<=5; i++) {
+            let cb = document.getElementById('driver'+i);
+            if(cb && cb.checked) drivers.push(cb.value);
         }
-
+        let driverText = drivers.length > 0 ? "<b>决策习惯：</b>" + drivers.join("、") + "<br>" : "<b>决策习惯：</b>无明显强迫性习惯<br>";
+        
+        let s1Val = document.getElementById('s1') ? document.getElementById('s1').value.replace(/\n/g, '<br>') : '';
+        html += `<tr><td><b>驱力习惯</b></td><td colspan='3'>${driverText} ${s1Val ? '<br><b>影响：</b>'+s1Val : ''}</td></tr>`;
+        
+        let s2Val = document.getElementById('s2') ? document.getElementById('s2').value.replace(/\n/g, '<br>') : '';
+        html += `<tr><td><b>隐性担忧</b></td><td colspan='3'>${s2Val ? s2Val : '<span style="color:#cbd5e1;font-size:12px;">(未填写)</span>'}</td></tr>`;
+        
         const sumTable = document.getElementById('sum-table');
-        if (sumTable) {
-            sumTable.innerHTML = html;
-        } else {
-            alert("找不到表格容器！");
-        }
+        if (sumTable) sumTable.innerHTML = html;
         
         if (summaryDiv) summaryDiv.scrollIntoView({behavior: "smooth", block: "start"});
-        localStorage.setItem('report_generated', 'true');
+        localStorage.setItem('report_done', 'true');
 
     } catch (error) {
         alert("生成表格时遇到代码错误：\n" + error.message);
     }
   }
 
-
-  // 4. 手动清除数据功能
   function clearData() {
-    if(confirm("确定要清空所有填写的内容吗？清空后无法恢复。")) {
+    if(confirm("确定要清空吗？清空后将无法恢复。")) {
       allInputs.forEach(input => {
         input.value = '';
-        localStorage.removeItem('ta_cbt_' + input.id);
+        localStorage.removeItem('t_app_' + input.id);
       });
+      allCheckboxes.forEach(cb => {
+        cb.checked = false;
+        localStorage.removeItem('t_app_' + cb.id);
+      });
+      document.getElementById('userFeedback').value = '';
+      setRating(0);
+      localStorage.removeItem('report_done');
       document.getElementById('summary').style.display = 'none';
-      localStorage.removeItem('report_generated'); // 同步清除标记
+      
+      // 恢复提交按钮状态
+      const submitBtn = document.querySelector('.btn-submit-feedback');
+      submitBtn.innerText = "提交反馈心得";
+      submitBtn.disabled = false;
+      submitBtn.style.background = "#6366f1";
     }
+  }
+
+  // ==== 反馈系统逻辑 ====
+  let currentRating = 0;
+
+  function setRating(score) {
+    currentRating = score;
+    const btns = document.querySelectorAll('.rating-btn');
+    btns.forEach(btn => {
+      btn.classList.remove('selected');
+      if (parseInt(btn.innerText) === score) {
+        btn.classList.add('selected');
+      }
+    });
+  }
+
+  function submitFeedback() {
+    const feedbackText = document.getElementById('userFeedback').value;
+    if (currentRating === 0) {
+      alert("请先选择上方的1-10分评价，再提交哦！");
+      return;
+    }
+    
+    alert("✨ 提交成功！\n\n您的评分：" + currentRating + "分\n\n感谢您的反馈，这10份宝贵的反馈将帮助我们进一步完善这份工具！\n（注：你可以通过截图将心得发给老师或咨询师）");
+    
+    // 提交后按钮变为已提交状态
+    const submitBtn = document.querySelector('.btn-submit-feedback');
+    submitBtn.innerText = "✓ 反馈已收到，谢谢您的贡献！";
+    submitBtn.disabled = true;
+    submitBtn.style.background = "#94a3b8";
   }
 </script>
 </body>
